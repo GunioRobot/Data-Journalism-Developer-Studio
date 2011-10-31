@@ -3,7 +3,7 @@ install.packages(c(
   'stringr',
   'rgeos',
   'RODBC',
-  'RPostgreSQL'), 
+  'RPostgreSQL'),
   repos='http://cran.cnr.berkeley.edu'
 )
 library(ctv)

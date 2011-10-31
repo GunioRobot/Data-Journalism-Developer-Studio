@@ -10,6 +10,6 @@ install.packages(c(
   repos='http://cran.cnr.berkeley.edu'
 )
 library(ctv)
-install.views('NaturalLanguageProcessing', 
+install.views('NaturalLanguageProcessing',
   repos='http://cran.cnr.berkeley.edu'
 )

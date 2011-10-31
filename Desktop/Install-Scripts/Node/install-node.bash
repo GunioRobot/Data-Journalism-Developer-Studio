@@ -13,7 +13,7 @@ tar xf ${WHAT}
 
 pushd ${DIR}
 ./configure
-make 
+make
 make install
 
 /sbin/ldconfig

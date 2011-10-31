@@ -1,26 +1,26 @@
 #! /bin/bash -e
 #
 #   setup_beancounter --- Example usage of the beancounter tool
-#  
+#
 #   Copyright (C) 2000 - 2006  Dirk Eddelbuettel <edd@debian.org>
-#  
+#
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
 #   the Free Software Foundation; either version 2 of the License, or
 #   (at your option) any later version.
-#  
+#
 #   This program is distributed in the hope that it will be useful,
 #   but WITHOUT ANY WARRANTY; without even the implied warranty of
 #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #   GNU General Public License for more details.
-#  
+#
 #   You should have received a copy of the GNU General Public License
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #   $Id: setup_beancounter,v 1.41 2006/03/22 04:15:28 edd Exp $
 
-#  If we really want to be independent of the underlying database, this 
+#  If we really want to be independent of the underlying database, this
 #  probably needs to written in Perl using DBI/DBD
 #
 #  This once started as being PostgreSQL specific ...
@@ -40,7 +40,7 @@
 #  i.e. a binary program 'sqlite3' is used to create a database for SQLite 3.*
 #  for which Perl code uses the DBD::SQLite module --- whereas 'sqlite' invokes
 #  the binary for the previous release SQLite 2.* for which Perl uses DBD::SQLite2
-#  If this differs on your system, you need to adjust the assignments of 
+#  If this differs on your system, you need to adjust the assignments of
 #  DBCOMMAND below, and/or adjust BeanCounter.pm for the proper Perl module.
 
 # -------------------------- 'global' variables
@@ -59,14 +59,14 @@ DBSYSTEM='PostgreSQL'
 SCHEMA_ONLY=0
 
 DAYOFWEEK=$(date +"%u")
-if [ "$DAYOFWEEK" -gt 5 ] || [ "$DAYOFWEEK" -eq 1 ] 
+if [ "$DAYOFWEEK" -gt 5 ] || [ "$DAYOFWEEK" -eq 1 ]
 then
     LASTBIZDAY="last friday"
 else
     LASTBIZDAY="yesterday"
 fi
 
-# Dow Jones Industrial Average 
+# Dow Jones Industrial Average
 # see for example http://www.amex.com/indexshares/index_shares_diamonds_list.stm
 DJIA="AA AXP T BA CAT C KO DIS DD EK XOM GE GM HPQ HD HON INTC IBM IP JNJ MCD MRK MSFT MMM JPM MO PG T UTX WMT"
 
@@ -80,7 +80,7 @@ function usage_and_exit
 {
     cat<<EOF
 Created (and fill) database tables for beancounter
-Usage: $progname [-m] [-n databasename] [-h] 
+Usage: $progname [-m] [-n databasename] [-h]
 Options:
     -m		Use MySQL instead of PostgreSQL
     -n SOMENAME Create database as SOMENAME instead of beancounter
@@ -103,7 +103,7 @@ function execute
 
 function create_mysql_tables
 {
-    echo | $DBCOMMAND $DATABASE <<EOF 
+    echo | $DBCOMMAND $DATABASE <<EOF
 
     create table beancounter (
 	version			varchar(12) not null,
@@ -185,7 +185,7 @@ EOF
 
 function create_postgres_tables
 {
-    echo | $DBCOMMAND $DATABASE <<EOF 
+    echo | $DBCOMMAND $DATABASE <<EOF
 
 	create table beancounter (
 	    version		varchar(12) not null,
@@ -259,7 +259,7 @@ function create_postgres_tables
 	    cost 		float default NULL,
 	    date 		date default NULL
 	);
-	create unique index cash_pkey 
+	create unique index cash_pkey
 	    on cash (name,type,owner,date);
 
 	create table indices (
@@ -270,9 +270,9 @@ function create_postgres_tables
 EOF
 }
 
-function create_sqlite_tables 
+function create_sqlite_tables
 {
-    echo | $DBCOMMAND $DATABASE <<EOF 
+    echo | $DBCOMMAND $DATABASE <<EOF
 
 	create table beancounter (
 	    version		varchar(12) not null,
@@ -346,7 +346,7 @@ function create_sqlite_tables
 	    cost 		float default NULL,
 	    date 		date default NULL
 	);
-	create unique index cash_pkey 
+	create unique index cash_pkey
 	    on cash (name,type,owner,date);
 
 	create table indices (
@@ -407,7 +407,7 @@ function exit_if_no_postgres_user
 {
     set +e
     ( $DBCOMMAND template1 -c "select * from pg_user;" | grep $1 ) \
-			    >/dev/null 2>&1 
+			    >/dev/null 2>&1
     if [ $? -eq 1 ]
     then
 	echo ""
@@ -433,7 +433,7 @@ function exit_if_no_mysql_user
 {
     set +e
     ( echo "select user from user;" | \
-	    $DBCOMMAND mysql | grep $1 ) >/dev/null 2>&1 
+	    $DBCOMMAND mysql | grep $1 ) >/dev/null 2>&1
     if [ $? -eq 1 ]
     then
 	echo ""
@@ -458,7 +458,7 @@ function exit_if_no_mysql_user
     fi
     set -e
 }
-  
+
 
 
 # ------------------------ 'main' code -------------------------------------
@@ -496,11 +496,11 @@ do
 	    echo "Ignoring unknown argument, try '$progname -h' for help."
 	    ;;
     esac
-done	    
+done
 
 BEANCOUNTER="beancounter --dbsystem $DBSYSTEM --dbname $DATABASE"
 
-if [ "$DBSYSTEM" = "PostgreSQL" ]; then		# if Postgres 
+if [ "$DBSYSTEM" = "PostgreSQL" ]; then		# if Postgres
     if [ -z "$PASSWORD" ]; then
 	DBCOMMAND="psql -q"
     else
@@ -544,7 +544,7 @@ if [ "$DBSYSTEM" = "PostgreSQL" ] || [ "$DBSYSTEM" = "MySQL" ]; then
     if [ "$DBSYSTEM" = "PostgreSQL" ]; then
         execute "createdb $DATABASE"
     elif [ "$DBSYSTEM" = "MySQL" ]; then
-        echo "create database $DATABASE;" | $DBCOMMAND 
+        echo "create database $DATABASE;" | $DBCOMMAND
     # NB deleting db under MySQL is:  mysqladmin drop beancounter_test -p$PASSWORD
     # grant access to $DATABASE db
     #GRANT="grant select,delete,insert,update on $DATABASE.* to $USER@localhost"
@@ -555,9 +555,9 @@ fi
 
 echo "Creating $DATABASE database tables"
 if [ "$DBSYSTEM" = "PostgreSQL" ]; then
-    create_postgres_tables 
+    create_postgres_tables
 elif [ "$DBSYSTEM" = "MySQL" ]; then
-    create_mysql_tables 
+    create_mysql_tables
 elif [ "$DBSYSTEM" = "SQLite2" ] || [ "$DBSYSTEM" = "SQLite" ]; then
     create_sqlite_tables
 fi
@@ -606,7 +606,7 @@ execute "$BEANCOUNTER fxbackpopulate --ubcfx --prevdate '4 years ago' --date '$L
 echo "Running portfolio pl report on (sample) portfolio"
 execute "$BEANCOUNTER plreport --date '$LASTBIZDAY'"
 
-# dayendreport needs a db entry previous price which we don't get from 
+# dayendreport needs a db entry previous price which we don't get from
 # all backpop routines / data combinations
 #echo "Running portfolio dayendreport on (sample) portfolio"
 #execute "$BEANCOUNTER dayendreport --date '$LASTBIZDAY'"
@@ -624,12 +624,12 @@ setup_beancounter - Create and initialise BeanCounter databases
 
 =head1 SYNOPSIS
 
-setup_beancounter [-m] [-n NAME] [-n] [-h] 
+setup_beancounter [-m] [-n NAME] [-n] [-h]
 
 =head1 DESCRIPTION
 
-B<setup_beancounter> creates and initialises the databases used by 
-B<beancounter>. It also runs some initial reports to illustrate some 
+B<setup_beancounter> creates and initialises the databases used by
+B<beancounter>. It also runs some initial reports to illustrate some
 of the features of B<beancounter>.
 
 =head1 OPTIONS

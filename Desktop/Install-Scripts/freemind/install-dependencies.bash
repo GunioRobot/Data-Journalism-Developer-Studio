@@ -6,4 +6,4 @@ sudo zypper refresh
 sudo zypper update
 
 sudo zypper install -y freemind freemind-plugins-help freemind-plugins-script \
-  freemind-plugins-svg 
+  freemind-plugins-svg

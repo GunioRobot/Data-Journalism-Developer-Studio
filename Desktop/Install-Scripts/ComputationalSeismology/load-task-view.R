@@ -6,6 +6,6 @@ install.packages(c(
   'RPMG',
   'Rwave',
   'RTOMO',
-  'WINRPACK'), 
+  'WINRPACK'),
   repos='http://cran.cnr.berkeley.edu'
 )

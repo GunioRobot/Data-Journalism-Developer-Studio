@@ -13,7 +13,7 @@ pushd ${DIR}
 # the GGobi build croaks if graphviz-devel is installed
 zypper remove -y graphviz-devel
 ./configure --with-all-plugins
-make 
+make
 make install
 make ggobirc
 mkdir -p /etc/xdg/ggobi
